@@ -25,7 +25,7 @@ public class hashcode {
             sum += ascii;
         }
 
-        int hashValue = sum * sizeofhash;
+        int hashValue = sum % sizeofhash;
         return hashValue;
     }
 }
