@@ -1,0 +1,42 @@
+package A_DSA;
+
+import java.util.Scanner;
+public class Longest_Common_String {
+    public static void main(String args[]){
+        Scanner sc = new Scanner(System.in);
+        System.out.print("Enter the first String: ");
+        String s1 = sc.nextLine();
+        System.out.print("Enter the second String: ");
+        String s2 = sc.nextLine();
+        int arr[][] = new int[s1.length()+1][s2.length()+1];
+        for(int i = 1; i<=s1.length(); i++){
+            for(int j = 1; j<=s2.length(); j++){
+                if(s1.charAt(i-1) == s2.charAt(j-1)){
+                    arr[i][j] = arr[i-1][j-1]+1;
+                }
+                else{
+                    arr[i][j] = Math.max(arr[i-1][j],arr[i][j-1]);
+                }
+            }
+        }
+        System.out.println("Length of LCS is: " + arr[s1.length()][s2.length()]);
+        int i = s1.length();
+        int j = s2.length();
+        StringBuilder lcs = new StringBuilder();
+        while (i>0 && j>0) {
+            if(s1.charAt(i-1) == s2.charAt(j-1)){
+                lcs.append(s1.charAt(i-1));
+                i--;
+                j--;
+            }
+            else if(arr[i-1][j] > arr[i][j-1]){
+                i--;
+            }
+            else {
+                j--;
+            }
+        }
+        System.out.println("LCS is: "+lcs.reverse().toString());
+        sc.close();
+    }
+}
