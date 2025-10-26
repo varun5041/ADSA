@@ -1,0 +1,73 @@
+#include <stdio.h>
+
+#define INFINITY 99999
+
+// Function to display the shortest path matrix
+void showShortestPaths(int vertices, int pathMatrix[][vertices]) {
+    printf("\nShortest path matrix:\n");
+
+    for (int from = 0; from < vertices; from++) {
+        for (int to = 0; to < vertices; to++) {
+            if (pathMatrix[from][to] == INFINITY)
+                printf("%7s", "INF");
+            else
+                printf("%7d", pathMatrix[from][to]);
+        }
+        printf("\n");
+    }
+}
+
+// Core implementation of Floyd-Warshall algorithm
+void computeShortestPaths(int vertices, int adjMatrix[][vertices]) {
+    int distance[vertices][vertices];
+
+    // Initialize distance matrix with input graph
+    for (int source = 0; source < vertices; source++) {
+        for (int dest = 0; dest < vertices; dest++) {
+            distance[source][dest] = adjMatrix[source][dest];
+        }
+    }
+
+    // Iteratively update distances using intermediate nodes
+    for (int intermediate = 0; intermediate < vertices; intermediate++) {
+        for (int src = 0; src < vertices; src++) {
+            for (int dst = 0; dst < vertices; dst++) {
+                if (
+                    distance[src][intermediate] != INFINITY &&
+                    distance[intermediate][dst] != INFINITY &&
+                    distance[src][intermediate] + distance[intermediate][dst] < distance[src][dst]
+                ) {
+                    distance[src][dst] = distance[src][intermediate] + distance[intermediate][dst];
+                }
+            }
+        }
+    }
+
+    // Display the final result
+    showShortestPaths(vertices, distance);
+}
+
+int main() {
+    int totalVertices;
+
+    printf("Enter Number of vertices: ");
+    scanf("%d", &totalVertices);
+
+    int matrix[totalVertices][totalVertices];
+
+    printf("Enter adjacency matrix (%dx%d):\n",totalVertices,totalVertices);
+
+    for (int row = 0; row < totalVertices; row++) {
+        for (int col = 0; col < totalVertices; col++) {
+            scanf("%d", &matrix[row][col]);
+
+            if (row != col && matrix[row][col] == 0) {
+                matrix[row][col] = INFINITY;
+            }
+        }
+    }
+
+    computeShortestPaths(totalVertices, matrix);
+
+    return 0;
+}
