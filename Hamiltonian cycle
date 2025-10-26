@@ -1,0 +1,128 @@
+#include <stdio.h>
+#include <stdbool.h>
+
+#define MAX 20
+
+// Function declarations
+bool HamCycleUtil(int Graph[MAX][MAX], int path[MAX], bool visited[MAX], int pos, int n);
+bool IsSafe(int v, int Graph[MAX][MAX], int path[MAX], bool visited[MAX], int pos);
+void PrintPath(int path[MAX], int n);
+
+// Procedure HamiltonianCycle
+void HamiltonianCycle(int Graph[MAX][MAX], int n)
+{
+    int path[MAX];
+    bool visited[MAX];
+
+    // Start at vertex 0
+    path[0] = 0;
+    visited[0] = true;
+
+    // Initialize remaining path and visited
+    for (int i = 1; i < n; i++)
+    {
+        path[i] = -1;
+        visited[i] = false;
+    }
+
+    if (HamCycleUtil(Graph, path, visited, 1, n) == true)
+    {
+        // Print Hamiltonian cycle
+        PrintPath(path, n);
+    }
+    else
+    {
+        printf("No Hamiltonian cycle found\n");
+    }
+}
+
+// Function HamCycleUtil
+bool HamCycleUtil(int Graph[MAX][MAX], int path[MAX], bool visited[MAX], int pos, int n)
+{
+    if (pos == n)
+    {
+        // Check if last vertex connects to the first to form a cycle
+        if (Graph[path[pos - 1]][path[0]] == 1)
+        {
+            return true;
+        }
+        else
+        {
+            return false;
+        }
+    }
+
+    // Try all vertices except starting vertex 0
+    for (int v = 1; v < n; v++)
+    {
+        if (IsSafe(v, Graph, path, visited, pos) == true)
+        {
+            path[pos] = v;
+            visited[v] = true;
+
+            // Recursive call
+            if (HamCycleUtil(Graph, path, visited, pos + 1, n) == true)
+            {
+                return true;
+            }
+
+            // Backtrack
+            visited[v] = false;
+            path[pos] = -1;
+        }
+    }
+
+    return false; // No valid vertex leads to a cycle
+}
+
+// Function IsSafe
+bool IsSafe(int v, int Graph[MAX][MAX], int path[MAX], bool visited[MAX], int pos)
+{
+    // Check if there is an edge from previous vertex to v
+    if (Graph[path[pos - 1]][v] == 0)
+    {
+        return false;
+    }
+
+    // Check if vertex is already in the path
+    if (visited[v] == true)
+    {
+        return false;
+    }
+
+    return true;
+}
+
+// Print the Hamiltonian cycle
+void PrintPath(int path[MAX], int n)
+{
+    printf("Hamiltonian Cycle: ");
+    for (int i = 0; i < n; i++)
+    {
+        printf("%d ", path[i]);
+    }
+    printf("%d\n", path[0]); // To show the cycle (return to start)
+}
+
+// Main function
+int main()
+{
+    int n;
+    int Graph[MAX][MAX];
+
+    printf("Enter the number of vertices: ");
+    scanf("%d", &n);
+
+    printf("Enter the adjacency matrix (%dx%d):\n", n, n);
+    for (int i = 0; i < n; i++)
+    {
+        for (int j = 0; j < n; j++)
+        {
+            scanf("%d", &Graph[i][j]);
+        }
+    }
+
+    HamiltonianCycle(Graph, n);
+
+    return 0;
+}
