@@ -1,0 +1,127 @@
+#include <stdio.h>
+#include <stdbool.h>
+
+#define MAX 20 // Maximum board size
+
+// Function declarations
+bool SolveNQ(int board[MAX][MAX], int row, int n);
+bool IsSafe(int board[MAX][MAX], int row, int col, int n);
+void PrintBoard(int board[MAX][MAX], int n);
+
+// Procedure NQueens()
+void NQueens()
+{
+    int n;
+
+    // Input n
+    printf("Enter the number of queens: ");
+    scanf("%d", &n);
+
+    int board[MAX][MAX];
+
+    // Initialize board with 0s
+    for (int i = 0; i < n; i++)
+    {
+        for (int j = 0; j < n; j++)
+        {
+            board[i][j] = 0;
+        }
+    }
+
+    // If no solution
+    if (SolveNQ(board, 0, n) == false)
+    {
+        printf("No solution exists\n");
+    }
+}
+
+// Function SolveNQ
+bool SolveNQ(int board[MAX][MAX], int row, int n)
+{
+    if (row == n)
+    {
+        // All queens placed
+        PrintBoard(board, n);
+        return true;
+    }
+
+    bool res = false;
+
+    for (int col = 0; col < n; col++)
+    {
+        if (IsSafe(board, row, col, n) == true)
+        {
+            board[row][col] = 1; // place queen
+
+            // Recursively place rest and combine result
+            res = SolveNQ(board, row + 1, n) || res;
+
+            board[row][col] = 0; // backtrack
+        }
+    }
+
+    return res;
+}
+
+// Function IsSafe
+bool IsSafe(int board[MAX][MAX], int row, int col, int n)
+{
+    // Check column
+    for (int i = 0; i < row; i++)
+    {
+        if (board[i][col] == 1)
+        {
+            return false;
+        }
+    }
+
+    // Check upper-left diagonal
+    int i = row, j = col;
+    while (i >= 0 && j >= 0)
+    {
+        if (board[i][j] == 1)
+        {
+            return false;
+        }
+        i = i - 1;
+        j = j - 1;
+    }
+
+    // Check upper-right diagonal
+    i = row;
+    j = col;
+    while (i >= 0 && j < n)
+    {
+        if (board[i][j] == 1)
+        {
+            return false;
+        }
+        i = i - 1;
+        j = j + 1;
+    }
+
+    return true;
+}
+
+// Procedure PrintBoard
+void PrintBoard(int board[MAX][MAX], int n)
+{
+    static int Scount = 1;
+    printf("Solution %d:\n", Scount++);
+    for (int i = 0; i < n; i++)
+    {
+        for (int j = 0; j < n; j++)
+        {
+            printf("%d ", board[i][j]);
+        }
+        printf("\n");
+    }
+    printf("\n");
+}
+
+// Main function
+int main()
+{
+    NQueens();
+    return 0;
+}
